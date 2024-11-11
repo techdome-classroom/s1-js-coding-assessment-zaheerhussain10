@@ -1,41 +1,32 @@
 const getTotalIsles = function (grid) {
-    // Define the dimensions of the grid
-    const rows = grid.length;
-    const cols = grid[0].length;
-
-    // Helper function to perform DFS
-    const dfs = (r, c) => {
-        // Base condition: out of bounds or at water
-        if (r < 0 || r >= rows || c < 0 || c >= cols || grid[r][c] === 'W') {
-            return;
-        }
-
-        // Mark the cell as visited by turning it to water ('W')
-        grid[r][c] = 'W';
-
-        // Explore all 4 possible directions (up, down, left, right)
-        dfs(r + 1, c); // down
-        dfs(r - 1, c); // up
-        dfs(r, c + 1); // right
-        dfs(r, c - 1); // left
-    };
-
+    if (!grid || grid.length === 0) return 0;
+  
+    const Rows = grid.length;
+    const Cols = grid[0].length;
     let islandCount = 0;
-
-    // Traverse the grid
-    for (let i = 0; i < rows; i++) {
-        for (let j = 0; j < cols; j++) {
-            // When we find an 'L', it means we found a new island
-            if (grid[i][j] === 'L') {
-                // Start a DFS to mark all land connected to this cell
-                dfs(i, j);
-                // Increment the island count
-                islandCount++;
-            }
-        }
+  
+    function dfs(x, y) {
+      if (x < 0 || x >= Rows || y < 0 || y >= Cols || grid[x][y] === "W") {
+        return;
+      }
+      grid[x][y] = "W";
+  
+      dfs(x + 1, y);
+      dfs(x - 1, y);
+      dfs(x, y + 1);
+      dfs(x, y - 1);
     }
-
+  
+    for (let i = 0; i < Rows; i++) {
+      for (let j = 0; j < Cols; j++) {
+        if (grid[i][j] === "L") {
+          dfs(i, j);
+          islandCount += 1;
+        }
+      }
+    }
+  
     return islandCount;
-};
-
-module.exports = getTotalIsles;
+  };
+  
+  module.exports = getTotalIsles;
