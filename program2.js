@@ -1,42 +1,29 @@
 const decodeTheRing = function (s, p) {
-  // Recursive helper function to match the message and the pattern
-  const matchHelper = (sIndex, pIndex) => {
-      // If both the string and pattern are completely matched
-      if (sIndex === s.length && pIndex === p.length) {
-          return true;
+    const m = s.length;
+    const n = p.length;
+  
+    const dp = Array(n + 1)
+      .fill(false)
+      .map(() => Array(m + 1).fill(false));
+    dp[0][0] = true;
+  
+    for (let i = 1; i <= n; i++) {
+      if (p[i - 1] === "*") {
+        dp[i][0] = dp[i - 1][0];
       }
-
-      // If the pattern has more characters but the string is finished
-      if (pIndex === p.length) {
-          return false;
+    }
+  
+    for (let i = 1; i <= n; i++) {
+      for (let j = 1; j <= m; j++) {
+        if (p[i - 1] === s[j - 1] || p[i - 1] === "?") {
+          dp[i][j] = dp[i - 1][j - 1];
+        } else if (p[i - 1] === "*") {
+          dp[i][j] = dp[i - 1][j] || dp[i][j - 1];
+        }
       }
-
-      // If current pattern character is '?', it can match any one character
-      if (p[pIndex] === '?') {
-          return matchHelper(sIndex + 1, pIndex + 1);
-      }
-
-      // If the current pattern character is '*', it can match zero or more characters
-      if (p[pIndex] === '*') {
-          // Try to match with zero characters or one character at a time
-          for (let i = sIndex; i <= s.length; i++) {
-              if (matchHelper(i, pIndex + 1)) {
-                  return true;
-              }
-          }
-          return false;
-      }
-
-      // If characters match exactly, move both indices
-      if (sIndex < s.length && s[sIndex] === p[pIndex]) {
-          return matchHelper(sIndex + 1, pIndex + 1);
-      }
-
-      // If no match, return false
-      return false;
+    }
+  
+    return dp[n][m];
   };
-
-  return matchHelper(0, 0);
-};
-
-module.exports = decodeTheRing;
+  
+  module.exports = decodeTheRing;
